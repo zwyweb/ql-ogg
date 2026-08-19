@@ -59,14 +59,21 @@ fi
 UNIVERSAL="${UNIVERSAL:-0}"
 TARGETS=("x86_64-apple-macos10.15")
 [ "$UNIVERSAL" = "1" ] && TARGETS+=("arm64-apple-macos11.0")
+EXTRA_LDFLAGS=()
 
 echo "==> Cleaning build dir"
 rm -rf "$BUILD"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$EXT/Contents/MacOS" "$EXT/Contents/Resources"
 
 # build_binary <module-name> <output-path> <src files...>
+# Reads optional extra linker flags from the EXTRA_LDFLAGS array (set it
+# before calling, or leave it empty/unset).
 build_binary() {
     local module="$1" out="$2"; shift 2
+    local -a extra=()
+    if [ "${#EXTRA_LDFLAGS[@]}" -gt 0 ]; then
+        extra=("${EXTRA_LDFLAGS[@]}")
+    fi
     local slices=()
     for target in "${TARGETS[@]}"; do
         local slice="$BUILD/.slice-${module}-${target%%-*}"
@@ -75,6 +82,7 @@ build_binary() {
             -module-name "$module" \
             -O -whole-module-optimization \
             -emit-executable \
+            "${extra[@]}" \
             -o "$slice" \
             "$@"
         slices+=("$slice")
@@ -86,7 +94,12 @@ build_binary() {
     fi
 }
 
+# App extensions (.appex) are Mach-O executables, but their entry point
+# is Foundation's NSExtensionMain, not a user-supplied main() — Xcode
+# normally wires this up invisibly via the "app-extension" product
+# type. Since we're linking by hand, do it explicitly:
 echo "==> Compiling QLGGExtension.appex (targets: ${TARGETS[*]})"
+EXTRA_LDFLAGS=(-Xlinker -e -Xlinker _NSExtensionMain)
 build_binary "QLGGExtension" "$EXT/Contents/MacOS/QLGGExtension" \
     "$SRC/QLGGExtension/FFmpegLocator.swift" \
     "$SRC/QLGGExtension/PreviewProvider.swift"
@@ -94,6 +107,7 @@ build_binary "QLGGExtension" "$EXT/Contents/MacOS/QLGGExtension" \
 cp "$RES/Info-Extension.plist" "$EXT/Contents/Info.plist"
 
 echo "==> Compiling QLGG.app (targets: ${TARGETS[*]})"
+EXTRA_LDFLAGS=()
 build_binary "QLGGApp" "$APP/Contents/MacOS/QLGG" \
     "$SRC/QLGGApp/QLGGApp.swift" \
     "$SRC/QLGGApp/ContentView.swift" \
