@@ -13,7 +13,11 @@
 # If your own Mac only has Command Line Tools, run this in CI instead —
 # see .github/workflows/build.yml, which uses a GitHub-hosted macOS
 # runner (comes with Xcode preinstalled) to do the actual build for you.
-set -euo pipefail
+# Note: no -u/nounset — macOS's system /bin/bash is stuck at 3.2 (GPLv3
+# licensing), which throws "unbound variable" on "${arr[@]}" for an
+# *empty* array even when declared, so -u fights with the optional
+# EXTRA_LDFLAGS array below. GitHub Actions macOS runners hit this too.
+set -eo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC="$ROOT/Sources"
