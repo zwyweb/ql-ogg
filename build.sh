@@ -113,9 +113,9 @@ cp "$RES/Info-Extension.plist" "$EXT/Contents/Info.plist"
 echo "==> Compiling QLGG.app (targets: ${TARGETS[*]})"
 EXTRA_LDFLAGS=()
 build_binary "QLGGApp" "$APP/Contents/MacOS/QLGG" \
-    "$SRC/QLGGApp/QLGGApp.swift" \
-    "$SRC/QLGGApp/ContentView.swift" \
-    "$SRC/QLGGApp/QuickLookPanel.swift"
+    "$SRC/QLGGApp/AppDelegate.swift" \
+    "$SRC/QLGGApp/QuickLookPanel.swift" \
+    "$SRC/QLGGApp/main.swift"
 
 cp "$RES/Info-App.plist" "$APP/Contents/Info.plist"
 
