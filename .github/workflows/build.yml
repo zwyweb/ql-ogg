@@ -1,0 +1,42 @@
+name: Build QLGG.app
+
+# Builds on GitHub's macOS runner, which comes with full Xcode.app
+# preinstalled — that's what supplies QuickLookUI.framework, needed for
+# QLPreviewingController (macOS 10.15 support). Your own machine only
+# needs Command Line Tools to develop; CI does the actual .app build.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14   # ships several Xcode versions; has QuickLookUI
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select an available Xcode (needed for QuickLookUI.framework)
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Show toolchain
+        run: |
+          xcode-select -p
+          xcrun --sdk macosx --show-sdk-path
+          swift --version
+
+      - name: Build
+        run: ./build.sh
+        env:
+          # Set to 1 to also produce an arm64 slice (min macOS 11) and
+          # lipo it together with the x86_64/macOS-10.15 slice.
+          UNIVERSAL: "0"
+
+      - name: Upload QLGG.app
+        uses: actions/upload-artifact@v4
+        with:
+          name: QLGG.app
+          path: build/QLGG.app
+          if-no-files-found: error
