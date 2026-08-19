@@ -28,7 +28,9 @@ jobs:
           swift --version
 
       - name: Build
-        run: ./build.sh
+        run: |
+          chmod +x build.sh
+          ./build.sh
         env:
           # Set to 1 to also produce an arm64 slice (min macOS 11) and
           # lipo it together with the x86_64/macOS-10.15 slice.
