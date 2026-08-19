@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>QLGGExtension</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.qlgg.app.extension</string>
+    <key>CFBundleName</key>
+    <string>QLGGExtension</string>
+    <key>CFBundlePackageType</key>
+    <string>XPC!</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15</string>
+    <key>NSExtension</key>
+    <dict>
+        <key>NSExtensionPointIdentifier</key>
+        <string>com.apple.quicklook.preview</string>
+        <key>NSExtensionPrincipalClass</key>
+        <string>PreviewProvider</string>
+        <key>QLSupportedContentTypes</key>
+        <array>
+            <string>org.xiph.ogg-audio</string>
+            <string>org.xiph.opus</string>
+            <string>org.xiph.vorbis</string>
+        </array>
+        <key>QLSupportsSearchableItems</key>
+        <false/>
+    </dict>
+    <!--
+      Fallback UTI declarations in case org.xiph.* aren't already
+      registered system-wide on macOS 10.15 (they're bundled by later
+      OS versions / apps like VLC). Declaring them here as well makes
+      the extension self-sufficient for .ogg/.oga/.opus recognition.
+    -->
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>org.xiph.ogg-audio</string>
+            <key>UTTypeConformsTo</key>
+            <array><string>public.audio</string></array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>ogg</string><string>oga</string></array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>org.xiph.opus</string>
+            <key>UTTypeConformsTo</key>
+            <array><string>public.audio</string></array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>opus</string></array>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

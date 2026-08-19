@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      NOTE: App Sandbox is intentionally OFF here. A sandboxed extension
+      cannot Process.run() an arbitrary binary found on $PATH (that's
+      exactly the "duplicate the codec inside the sandbox" case this
+      project is avoiding). If you need Mac App Store distribution, you
+      must bundle a signed ffmpeg binary instead and re-enable sandbox
+      with a mach-lookup/temporary-exception entitlement for it.
+    -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+</dict>
+</plist>
